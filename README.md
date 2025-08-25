@@ -1,6 +1,6 @@
 # OpenMac
 
-OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **Zig** and **Assembly**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
+OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **C** and **Assembly** and **GRUB**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
 
 ## Goals
 
@@ -10,9 +10,9 @@ OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-insp
 - Create an extensible foundation for **drivers and networking**.
 - Eventually provide a lightweight **graphical environment** inspired by macOS frameworks.
 
-## Why Zig and Assembly?
+## Why C and Assembly?
 
-- **Zig** provides low-level control, safety, and modern language features, ideal for OS development.
+- **C** provides low-level control, safety, ideal for OS development.
 - **Assembly** is used for performance-critical and hardware-specific components such as boot code and context switching.
 
 ## Getting Started
@@ -30,6 +30,7 @@ Currently, OpenMac is in the **early stages of development**. Contributors are w
 - Zig compiler
 - NASM or other assembler (for ASM components)
 - QEMU or other virtualization software for testing
+- GRUB for booting
 
 ## Contribution
 
