@@ -27,7 +27,7 @@ Currently, OpenMac is in the **early stages of development**. Contributors are w
 ### Requirements
 
 - x86_64 or ARM64 architecture (depending on the branch)
-- Zig compiler
+- C compiler
 - NASM or other assembler (for ASM components)
 - QEMU or other virtualization software for testing
 - GRUB for booting
