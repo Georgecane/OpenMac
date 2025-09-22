@@ -1,6 +1,6 @@
 # OpenMac
 
-OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **C** and **Assembly** and **GRUB**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
+OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **C** and **Assembly** and **Limine**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
 
 ## Goals
 
@@ -30,7 +30,7 @@ Currently, OpenMac is in the **early stages of development**. Contributors are w
 - C compiler
 - NASM or other assembler (for ASM components)
 - QEMU or other virtualization software for testing
-- GRUB for booting
+- Limine for booting
 
 ## Contribution
 
