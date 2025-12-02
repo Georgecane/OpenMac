@@ -10,7 +10,7 @@ OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-insp
 - Create an extensible foundation for **drivers and networking**.
 - Eventually provide a lightweight **graphical environment** inspired by macOS frameworks.
 
-## Why C and Assembly?
+## Why Zig and Assembly?
 
 - **Zig** provides low-level control, safety, ideal for OS development.
 - **Assembly** is used for performance-critical and hardware-specific components such as boot code and context switching.
