@@ -1,6 +1,6 @@
 # OpenMac
 
-OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **Rust** and **Assembly**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
+OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-inspired operating system from scratch** using **C** and **Assembly**. While the project draws **architectural inspiration from Darwin**, all code is written from the ground up, ensuring a fully independent implementation.
 
 ## Goals
 
@@ -10,9 +10,9 @@ OpenMac is an open-source project aiming to **reimagine and rebuild a macOS-insp
 - Create an extensible foundation for **drivers and networking**.
 - Eventually provide a lightweight **graphical environment** inspired by macOS frameworks.
 
-## Why Rust and Assembly?
+## Why C and Assembly?
 
-- **Rust** provides low-level control, safety, ideal for OS development.
+- **C** provides low-level control, safety, ideal for OS development.
 - **Assembly** is used for performance-critical and hardware-specific components such as boot code and context switching.
 
 ## Getting Started
@@ -27,8 +27,8 @@ Currently, OpenMac is in the **early stages of development**. Contributors are w
 ### Requirements
 
 - x86_64 or ARM64 architecture (depending on the branch)
-- Rust compiler
-- NASM or other assembler (for ASM components)
+- C compiler
+- ASM or other assembler (for ASM components)
 - QEMU or other virtualization software for testing
 
 ## Contribution
