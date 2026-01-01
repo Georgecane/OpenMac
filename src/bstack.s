@@ -23,5 +23,5 @@ _start:
 section .bss
 align 16
 stack_bottom:
-    resb 16384 ; 16 KB پشته
+    resb 32768 ; 16 KB پشته
 stack_top:
