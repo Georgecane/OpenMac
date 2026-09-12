@@ -8,3 +8,5 @@
 kernel.bin
 
 .vscode
+
+.zig-cache/
