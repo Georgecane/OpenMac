@@ -43,7 +43,6 @@ pub fn main() void {
     const boot_info = BootInfo{
         .memory_map = map_buffer[0..map_size],
         .memory_map_size = map_size,
-        .memory_map_key = map.info.key,
         .memory_descriptor_size = map.info.descriptor_size,
         .memory_descriptor_version = map.info.descriptor_version,
     };
