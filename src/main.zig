@@ -6,7 +6,7 @@ const kernel = @import("kernel/kernel.zig");
 
 fn fatal() noreturn {
     const con_out = uefi.system_table.con_out orelse unreachable;
-    _ = con_out.outputString(std.unicode.utf8ToUtf16LeStringLiteral("OpenMac boot failure.\r\n"));
+    con_out.outputString(std.unicode.utf8ToUtf16LeStringLiteral("OpenMac boot failure.\r\n")) catch {};
     while (true) {
         asm volatile ("hlt");
     }
