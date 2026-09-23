@@ -20,8 +20,6 @@ pub fn build(b: *std.Build) void {
         .root_module = kernel_module,
     });
 
-    // UEFI produces a PE/COFF executable. The old ELF linker script
-    // must not be passed to this target.
     const install_step = b.addInstallArtifact(kernel, .{
         .dest_dir = .{ .override = .{ .custom = "uefi/EFI/BOOT" } },
     });
@@ -32,8 +30,8 @@ pub fn build(b: *std.Build) void {
         "Path to OVMF firmware",
     ) orelse getDefaultOvmfPath();
 
-    // QEMU's FAT directory backend lets OVMF boot the generated
-    // EFI/BOOT/BOOTX64.EFI without requiring mkfs/mtools.
+    const debug_log = "zig-out/openmac-debug.log";
+
     const run_cmd = b.addSystemCommand(&.{
         "qemu-system-x86_64",
         "-bios",
@@ -44,6 +42,10 @@ pub fn build(b: *std.Build) void {
         "512M",
         "-serial",
         "stdio",
+        "-debugcon",
+        debug_log,
+        "-global",
+        "isa-debugcon.iobase=0xe9",
         "-display",
         "none",
         "-no-reboot",
