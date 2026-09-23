@@ -2,30 +2,42 @@ const std = @import("std");
 const uefi = std.os.uefi;
 
 const BootInfo = @import("boot/boot_info.zig").BootInfo;
+const debug = @import("drivers/debug.zig");
 const kernel = @import("kernel/kernel.zig");
 
 fn fatal() noreturn {
+    debug.write("UEFI:fatal\n");
     while (true) {
         asm volatile ("hlt");
     }
 }
 
 pub fn main() void {
+    debug.write("UEFI:entered\n");
+
     const boot_services = uefi.system_table.boot_services orelse fatal();
+    debug.write("UEFI:boot-services\n");
 
     const map_info = boot_services.getMemoryMapInfo() catch fatal();
+    debug.write("UEFI:memory-map-info\n");
+
     const extra_descriptors: usize = 8;
     const map_bytes = (map_info.len + extra_descriptors) * map_info.descriptor_size;
 
     const map_buffer = boot_services.allocatePool(.loader_data, map_bytes)
         catch fatal();
+    debug.write("UEFI:map-buffer\n");
 
     var map = boot_services.getMemoryMap(map_buffer) catch fatal();
+    debug.write("UEFI:memory-map\n");
 
     while (true) {
+        debug.write("UEFI:exit-boot-services\n");
+
         boot_services.exitBootServices(uefi.handle, map.info.key) catch |err| {
             switch (err) {
                 error.InvalidParameter => {
+                    debug.write("UEFI:map-refresh\n");
                     map = boot_services.getMemoryMap(map_buffer)
                         catch fatal();
                     continue;
@@ -36,6 +48,8 @@ pub fn main() void {
         break;
     }
 
+    debug.write("UEFI:boot-services-exited\n");
+
     const map_size = map.info.len * map.info.descriptor_size;
 
     const boot_info = BootInfo{
@@ -45,5 +59,6 @@ pub fn main() void {
         .memory_descriptor_version = map.info.descriptor_version,
     };
 
+    debug.write("UEFI:kernel-main\n");
     kernel.main(&boot_info);
 }
