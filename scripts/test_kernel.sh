@@ -30,14 +30,21 @@ cat "$LOG_FILE"
 
 if [ "$QEMU_STATUS" -ne 124 ]; then
     echo
-    echo "[FAIL] QEMU did not reach the expected kernel idle loop."
+    echo "[FAIL] QEMU did not remain running until the test timeout."
     echo "[FAIL] Exit status: $QEMU_STATUS"
+    exit 1
+fi
+
+if ! grep -Fq "UEFI:entered" "$LOG_FILE"; then
+    echo
+    echo "[FAIL] UEFI application entry point was not observed on the serial console."
+    echo "[FAIL] This indicates the failure is before main() or before serial initialization."
     exit 1
 fi
 
 if [ ! -f "$DEBUG_LOG" ]; then
     echo
-    echo "[FAIL] QEMU produced no kernel debug log."
+    echo "[FAIL] QEMU produced no kernel debug log after UEFI entry."
     exit 1
 fi
 
