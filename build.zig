@@ -30,8 +30,6 @@ pub fn build(b: *std.Build) void {
         "Path to OVMF firmware",
     ) orelse getDefaultOvmfPath();
 
-    const debug_log = "zig-out/openmac-debug.log";
-
     const run_cmd = b.addSystemCommand(&.{
         "qemu-system-x86_64",
         "-bios",
