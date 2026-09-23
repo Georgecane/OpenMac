@@ -13,6 +13,24 @@ fn fatal() noreturn {
     }
 }
 
+/// Explicit UEFI entry point.
+///
+/// Zig's standard startup normally exports this symbol for a UEFI target.
+/// Defining it here makes the firmware entry ABI explicit and removes the
+/// startup shim as a variable while we bootstrap OpenMac.
+pub export fn EfiMain(
+    handle: uefi.Handle,
+    system_table: *uefi.tables.SystemTable,
+) callconv(.c) usize {
+    uefi.handle = handle;
+    uefi.system_table = system_table;
+
+    debug.write("UEFI:EfiMain\n");
+    main();
+
+    return 0;
+}
+
 pub fn main() void {
     serial.init();
     serial.write("UEFI:entered\r\n");
