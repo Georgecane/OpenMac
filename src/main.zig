@@ -3,6 +3,7 @@ const uefi = std.os.uefi;
 
 const BootInfo = @import("boot/boot_info.zig").BootInfo;
 const debug = @import("drivers/debug.zig");
+const serial = @import("drivers/serial.zig");
 const kernel = @import("kernel/kernel.zig");
 
 fn fatal() noreturn {
@@ -13,6 +14,8 @@ fn fatal() noreturn {
 }
 
 pub fn main() void {
+    serial.init();
+    serial.write("UEFI:entered\r\n");
     debug.write("UEFI:entered\n");
 
     const boot_services = uefi.system_table.boot_services orelse fatal();
