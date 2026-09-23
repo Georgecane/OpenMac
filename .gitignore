@@ -10,3 +10,5 @@ kernel.bin
 .vscode
 
 .zig-cache/
+
+zig-out/
