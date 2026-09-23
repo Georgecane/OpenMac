@@ -20,6 +20,12 @@ pub fn build(b: *std.Build) void {
         .root_module = kernel_module,
     });
 
+    // UEFI firmware enters the PE/COFF image through the exported EfiMain symbol.
+    // Make both the PE subsystem and linker entry explicit instead of relying on
+    // target-default inference.
+    kernel.subsystem = .efi_application;
+    kernel.entry = .{ .symbol_name = "EfiMain" };
+
     const install_step = b.addInstallArtifact(kernel, .{
         .dest_dir = .{ .override = .{ .custom = "uefi/EFI/BOOT" } },
     });
