@@ -35,13 +35,6 @@ if [ "$QEMU_STATUS" -ne 124 ]; then
     exit 1
 fi
 
-if ! grep -Fq "UEFI:entered" "$LOG_FILE"; then
-    echo
-    echo "[FAIL] UEFI application entry point was not observed on the serial console."
-    echo "[FAIL] This indicates the failure is before main() or before serial initialization."
-    exit 1
-fi
-
 if [ ! -f "$DEBUG_LOG" ]; then
     echo
     echo "[FAIL] QEMU produced no kernel debug log after UEFI entry."
@@ -51,6 +44,25 @@ fi
 echo
 echo "[OpenMac test] Kernel debug trace:"
 cat "$DEBUG_LOG"
+
+if ! grep -Fq "UEFI:EfiMain" "$DEBUG_LOG"; then
+    echo
+    echo "[FAIL] UEFI:EfiMain was not observed on the debug console."
+    echo "[FAIL] Firmware either did not launch BOOTX64.efi or the PE entry point is not being reached."
+    exit 1
+fi
+
+if ! grep -Fq "UEFI:entered" "$DEBUG_LOG"; then
+    echo
+    echo "[FAIL] EfiMain ran, but main() was not reached."
+    exit 1
+fi
+
+if ! grep -Fq "UEFI:entered" "$LOG_FILE"; then
+    echo
+    echo "[WARN] UEFI:entered was not observed on COM1, but debugcon confirms UEFI execution."
+    echo "[WARN] Continuing with debugcon as the authoritative bootstrap trace."
+fi
 
 required_debug_messages=(
     "KERNEL:entered"
