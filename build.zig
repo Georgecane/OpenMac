@@ -43,7 +43,7 @@ pub fn build(b: *std.Build) void {
         "-serial",
         "stdio",
         "-debugcon",
-        debug_log,
+        "file:zig-out/openmac-debug.log",
         "-global",
         "isa-debugcon.iobase=0xe9",
         "-display",
