@@ -56,7 +56,7 @@ pub fn build(b: *std.Build) void {
 
     const success = b.addSystemCommand(&.{
         "echo",
-        "OpenMac UEFI image built at zig-out/uefi/EFI/BOOT/BOOTX64.EFI",
+        "OpenMac UEFI image built at zig-out/uefi/EFI/BOOT/BOOTX64.efi",
     });
     success.step.dependOn(&install_step.step);
 
