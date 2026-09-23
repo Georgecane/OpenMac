@@ -42,6 +42,8 @@ pub fn build(b: *std.Build) void {
         "stdio",
         "-debugcon",
         "file:zig-out/openmac-debug.log",
+        "-global",
+        "isa-debugcon.iobase=0xe9",
         "-display",
         "none",
         "-no-reboot",
