@@ -18,7 +18,7 @@ fi
 
 rm -f "$DEBUG_LOG"
 
-echo "[OpenMac test] Booting through QEMU/OVMF..."
+echo "[OpenMac test] Booting through QEMU/OVMF from the IDE FAT disk..."
 echo "[OpenMac test] Timeout: ${TIMEOUT_SECONDS}s"
 
 set +e
