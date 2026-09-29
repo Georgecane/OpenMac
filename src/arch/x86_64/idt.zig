@@ -45,7 +45,6 @@ fn setGate(vector: u8, handler: u64) void {
 
 fn defaultHandler() callconv(.naked) noreturn {
     asm volatile ("cli; hlt");
-    unreachable;
 }
 
 pub fn init() void {
