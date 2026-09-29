@@ -16,12 +16,11 @@ var gdt: [3]u64 = .{
     0x00AF92000000FFFF,
 };
 
-var pointer = GdtPointer{
-    .limit = @sizeOf(@TypeOf(gdt)) - 1,
-    .base = @intFromPtr(&gdt),
-};
-
 pub fn init() void {
+    var pointer = GdtPointer{
+        .limit = @sizeOf(@TypeOf(gdt)) - 1,
+        .base = @intFromPtr(&gdt),
+    };
     asm volatile ("lgdt (%[pointer])"
         :
         : [pointer] "r" (&pointer)
