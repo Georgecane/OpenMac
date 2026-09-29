@@ -50,16 +50,12 @@ fn defaultHandler() callconv(.naked) noreturn {
 pub fn undefinedInstructionHandler() callconv(.naked) noreturn {
     asm volatile (
         \subq $8, %%rsp
-        \call *%[handler]
-        :
-        : [handler] "r" (&handleUndefinedInstruction)
-        : .{ .memory = true }
+        \call handleUndefinedInstruction
     );
 }
 
 fn handleUndefinedInstruction() noreturn {
-    @import("../../drivers/debug.zig").write("KERNEL:exception-ud
-");
+    @import("../../drivers/debug.zig").write("KERNEL:exception-ud\n");
     @import("../../drivers/serial.zig").write("Exception: undefined instruction (#UD).\r\n");
     @import("../../arch/x86_64/io.zig").halt();
 }
