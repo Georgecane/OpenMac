@@ -29,21 +29,21 @@ pub fn init() void {
     );
 
     asm volatile (
-        \pushq %[code_selector]
-        \leaq 1f(%rip), %%rax
-        \pushq %%rax
-        \lretq
-        \1:
+        \\pushq %[code_selector]
+        \\leaq 1f(%rip), %%rax
+        \\pushq %%rax
+        \\lretq
+        \\1:
         :
         : [code_selector] "i" (KERNEL_CODE_SELECTOR)
         : .{ .rax = true, .memory = true }
     );
 
     asm volatile (
-        \movw %[data_selector], %%ax
-        \movw %%ax, %%ds
-        \movw %%ax, %%es
-        \movw %%ax, %%ss
+        \\movw %[data_selector], %%ax
+        \\movw %%ax, %%ds
+        \\movw %%ax, %%es
+        \\movw %%ax, %%ss
         :
         : [data_selector] "i" (KERNEL_DATA_SELECTOR)
         : .{ .rax = true, .memory = true }
