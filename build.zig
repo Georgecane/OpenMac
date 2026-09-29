@@ -75,9 +75,9 @@ fn getDefaultOvmfPath() []const u8 {
     const os = @import("builtin").os.tag;
 
     return switch (os) {
-        .windows => "C:\\Program Files\\qemu\\share\\edk2-x86_64\\OVMF.fd",
-        .linux => "/usr/share/ovmf/OVMF.fd",
-        .macos => "/opt/homebrew/share/qemu/edk2-x86_64/OVMF.fd",
-        else => "/usr/share/ovmf/OVMF.fd",
+        .windows => "C:\\Program Files\\qemu\\share\\edk2-x86_64\\OVMF.4m.fd",
+        .linux => "/usr/share/edk2/x64/OVMF.4m.fd",
+        .macos => "/opt/homebrew/share/qemu/edk2-x86_64/OVMF.4m.fd",
+        else => "/usr/share/edk2/x64/OVMF.4m.fd",
     };
 }
