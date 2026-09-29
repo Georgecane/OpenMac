@@ -47,8 +47,26 @@ fn defaultHandler() callconv(.naked) noreturn {
     asm volatile ("cli; hlt");
 }
 
+pub fn undefinedInstructionHandler() callconv(.naked) noreturn {
+    asm volatile (
+        \subq $8, %%rsp
+        \call *%[handler]
+        :
+        : [handler] "r" (&handleUndefinedInstruction)
+        : .{ .memory = true }
+    );
+}
+
+fn handleUndefinedInstruction() noreturn {
+    @import("../../drivers/debug.zig").write("KERNEL:exception-ud
+");
+    @import("../../drivers/serial.zig").write("Exception: undefined instruction (#UD).\r\n");
+    @import("../../arch/x86_64/io.zig").halt();
+}
+
 pub fn init() void {
     setGate(0, @intFromPtr(&defaultHandler));
+    setGate(6, @intFromPtr(&undefinedInstructionHandler));
 
     pointer = .{
         .limit = @sizeOf(@TypeOf(idt)) - 1,
