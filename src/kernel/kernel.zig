@@ -26,8 +26,10 @@ pub fn main(boot_info: *const BootInfo) noreturn {
     serial.write("Descriptor size: ");
     serial.writeHex(boot_info.memory_descriptor_size);
     serial.write("\r\n");
-    serial.write("Kernel idle loop reached.\r\n");
 
-    debug.write("KERNEL:idle\n");
-    io.halt();
+    debug.write("KERNEL:trigger-ud\n");
+    serial.write("Triggering undefined instruction exception (#UD).\r\n");
+    asm volatile ("ud2");
+
+    unreachable;
 }
