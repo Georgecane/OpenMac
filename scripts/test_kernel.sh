@@ -6,9 +6,10 @@ cd "$ROOT_DIR"
 
 TIMEOUT_SECONDS="${OPENMAC_TEST_TIMEOUT:-8}"
 OVMF_PATH="${OPENMAC_OVMF:-/usr/share/edk2/x64/OVMF.4m.fd}"
-LOG_FILE="$(mktemp)"
+SERIAL_LOG="$(mktemp)"
 DEBUG_LOG="$ROOT_DIR/zig-out/openmac-debug.log"
-trap 'rm -f "$LOG_FILE" "$DEBUG_LOG"' EXIT
+QEMU_LOG="$(mktemp)"
+trap 'rm -f "$SERIAL_LOG" "$DEBUG_LOG" "$QEMU_LOG"' EXIT
 
 echo "[OpenMac test] Building UEFI kernel..."
 
@@ -38,17 +39,28 @@ timeout --signal=TERM --kill-after=2s "${TIMEOUT_SECONDS}s" \
     -drive "file=fat:rw:$ROOT_DIR/zig-out/uefi,format=raw,if=ide" \
     -boot order=c,menu=off \
     -m 512M \
-    -serial stdio \
+    -serial "file:$SERIAL_LOG" \
     -debugcon "file:$DEBUG_LOG" \
     -global isa-debugcon.iobase=0xe9 \
     -display none \
     -no-reboot \
     -no-shutdown \
-    >"$LOG_FILE" 2>&1
+    -d guest_errors,cpu_reset \
+    -D "$QEMU_LOG"
 QEMU_STATUS=$?
 set -e
 
-cat "$LOG_FILE"
+if [ -s "$SERIAL_LOG" ]; then
+    echo
+    echo "[OpenMac test] Serial output:"
+    cat "$SERIAL_LOG"
+fi
+
+if [ -s "$QEMU_LOG" ]; then
+    echo
+    echo "[OpenMac test] QEMU diagnostics:"
+    cat "$QEMU_LOG"
+fi
 
 if [ "$QEMU_STATUS" -ne 124 ]; then
     echo
@@ -60,6 +72,7 @@ fi
 if [ ! -f "$DEBUG_LOG" ]; then
     echo
     echo "[FAIL] QEMU produced no kernel debug log."
+    echo "[FAIL] QEMU diagnostics are shown above."
     exit 1
 fi
 
@@ -99,7 +112,7 @@ required_messages=(
 )
 
 for message in "${required_messages[@]}"; do
-    if ! grep -Fq "$message" "$LOG_FILE"; then
+    if ! grep -Fq "$message" "$SERIAL_LOG"; then
         echo
         echo "[FAIL] Missing serial output: $message"
         exit 1
