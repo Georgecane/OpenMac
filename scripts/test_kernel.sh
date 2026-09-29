@@ -5,8 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 TIMEOUT_SECONDS="${OPENMAC_TEST_TIMEOUT:-8}"
+OVMF_PATH="${OPENMAC_OVMF:-/usr/share/edk2/x64/OVMF.4m.fd}"
 LOG_FILE="$(mktemp)"
-DEBUG_LOG="zig-out/openmac-debug.log"
+DEBUG_LOG="$ROOT_DIR/zig-out/openmac-debug.log"
 trap 'rm -f "$LOG_FILE" "$DEBUG_LOG"' EXIT
 
 echo "[OpenMac test] Building UEFI kernel..."
@@ -16,13 +17,34 @@ if ! zig build; then
     exit 1
 fi
 
+if [ ! -f "$OVMF_PATH" ]; then
+    echo
+    echo "[FAIL] OVMF firmware not found:"
+    echo "[FAIL] $OVMF_PATH"
+    echo "[FAIL] Set OPENMAC_OVMF to the correct OVMF firmware path."
+    exit 1
+fi
+
 rm -f "$DEBUG_LOG"
 
 echo "[OpenMac test] Booting through QEMU/OVMF from the IDE FAT disk..."
 echo "[OpenMac test] Timeout: ${TIMEOUT_SECONDS}s"
+echo "[OpenMac test] OVMF: $OVMF_PATH"
 
 set +e
-timeout --signal=TERM --kill-after=2s "${TIMEOUT_SECONDS}s" zig build run-uefi >"$LOG_FILE" 2>&1
+timeout --signal=TERM --kill-after=2s "${TIMEOUT_SECONDS}s" \
+    qemu-system-x86_64 \
+    -bios "$OVMF_PATH" \
+    -drive "file=fat:rw:$ROOT_DIR/zig-out/uefi,format=raw,if=ide" \
+    -boot order=c,menu=off \
+    -m 512M \
+    -serial stdio \
+    -debugcon "file:$DEBUG_LOG" \
+    -global isa-debugcon.iobase=0xe9 \
+    -display none \
+    -no-reboot \
+    -no-shutdown \
+    >"$LOG_FILE" 2>&1
 QEMU_STATUS=$?
 set -e
 
@@ -37,7 +59,7 @@ fi
 
 if [ ! -f "$DEBUG_LOG" ]; then
     echo
-    echo "[FAIL] QEMU produced no kernel debug log after UEFI entry."
+    echo "[FAIL] QEMU produced no kernel debug log."
     exit 1
 fi
 
@@ -45,26 +67,16 @@ echo
 echo "[OpenMac test] Kernel debug trace:"
 cat "$DEBUG_LOG"
 
-if ! grep -Fq "UEFI:EfiMain" "$DEBUG_LOG"; then
-    echo
-    echo "[FAIL] UEFI:EfiMain was not observed on the debug console."
-    echo "[FAIL] Firmware either did not launch BOOTX64.efi or the PE entry point is not being reached."
-    exit 1
-fi
-
-if ! grep -Fq "UEFI:entered" "$DEBUG_LOG"; then
-    echo
-    echo "[FAIL] EfiMain ran, but main() was not reached."
-    exit 1
-fi
-
-if ! grep -Fq "UEFI:entered" "$LOG_FILE"; then
-    echo
-    echo "[WARN] UEFI:entered was not observed on COM1, but debugcon confirms UEFI execution."
-    echo "[WARN] Continuing with debugcon as the authoritative bootstrap trace."
-fi
-
 required_debug_messages=(
+    "UEFI:EfiMain"
+    "UEFI:entered"
+    "UEFI:boot-services"
+    "UEFI:memory-map-info"
+    "UEFI:map-buffer"
+    "UEFI:memory-map"
+    "UEFI:exit-boot-services"
+    "UEFI:boot-services-exited"
+    "UEFI:kernel-main"
     "KERNEL:entered"
     "KERNEL:serial-init"
     "KERNEL:idle"
