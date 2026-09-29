@@ -24,7 +24,6 @@ pub fn init() void {
     asm volatile ("lgdt (%[pointer])"
         :
         : [pointer] "r" (&pointer)
-        : "memory"
     );
 
     asm volatile (
