@@ -3,12 +3,16 @@ const debug = @import("../drivers/debug.zig");
 const serial = @import("../drivers/serial.zig");
 const io = @import("../arch/x86_64/io.zig");
 const gdt = @import("../arch/x86_64/gdt.zig");
+const idt = @import("../arch/x86_64/idt.zig");
 
 pub fn main(boot_info: *const BootInfo) noreturn {
     debug.write("KERNEL:entered\n");
 
     gdt.init();
     debug.write("KERNEL:gdt-init\n");
+
+    idt.init();
+    debug.write("KERNEL:idt-init\n");
 
     serial.init();
     debug.write("KERNEL:serial-init\n");
