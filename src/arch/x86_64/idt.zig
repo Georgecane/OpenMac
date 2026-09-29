@@ -49,15 +49,50 @@ fn defaultHandler() callconv(.naked) noreturn {
 
 pub fn undefinedInstructionHandler() callconv(.naked) noreturn {
     asm volatile (
-        \subq $8, %%rsp
-        \call handleUndefinedInstruction
+        \movw $0xE9, %%dx
+        \movb $75, %%al
+        \outb %%al, %%dx
+        \movb $69, %%al
+        \outb %%al, %%dx
+        \movb $82, %%al
+        \outb %%al, %%dx
+        \movb $78, %%al
+        \outb %%al, %%dx
+        \movb $69, %%al
+        \outb %%al, %%dx
+        \movb $76, %%al
+        \outb %%al, %%dx
+        \movb $58, %%al
+        \outb %%al, %%dx
+        \movb $101, %%al
+        \outb %%al, %%dx
+        \movb $120, %%al
+        \outb %%al, %%dx
+        \movb $99, %%al
+        \outb %%al, %%dx
+        \movb $101, %%al
+        \outb %%al, %%dx
+        \movb $112, %%al
+        \outb %%al, %%dx
+        \movb $116, %%al
+        \outb %%al, %%dx
+        \movb $105, %%al
+        \outb %%al, %%dx
+        \movb $111, %%al
+        \outb %%al, %%dx
+        \movb $110, %%al
+        \outb %%al, %%dx
+        \movb $45, %%al
+        \outb %%al, %%dx
+        \movb $117, %%al
+        \outb %%al, %%dx
+        \movb $100, %%al
+        \outb %%al, %%dx
+        \movb $10, %%al
+        \outb %%al, %%dx
+        \cli
+        \hlt
     );
-}
-
-fn handleUndefinedInstruction() noreturn {
-    @import("../../drivers/debug.zig").write("KERNEL:exception-ud\n");
-    @import("../../drivers/serial.zig").write("Exception: undefined instruction (#UD).\r\n");
-    @import("../../arch/x86_64/io.zig").halt();
 }
 
 pub fn init() void {
