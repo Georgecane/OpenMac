@@ -92,7 +92,8 @@ required_debug_messages=(
     "UEFI:kernel-main"
     "KERNEL:entered"
     "KERNEL:serial-init"
-    "KERNEL:idle"
+    "KERNEL:trigger-ud"
+    "KERNEL:exception-ud"
 )
 
 for message in "${required_debug_messages[@]}"; do
@@ -108,7 +109,8 @@ required_messages=(
     "Boot services are no longer available."
     "Memory map bytes:"
     "Descriptor size:"
-    "Kernel idle loop reached."
+    "Triggering undefined instruction exception (#UD)."
+    "Exception: undefined instruction (#UD)."
 )
 
 for message in "${required_messages[@]}"; do
@@ -120,4 +122,4 @@ for message in "${required_messages[@]}"; do
 done
 
 echo
-echo "[PASS] OpenMac kernel boot test passed."
+echo "[PASS] OpenMac undefined instruction exception test passed."
